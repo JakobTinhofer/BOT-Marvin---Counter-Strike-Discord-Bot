@@ -21,11 +21,18 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Actions
         /// </summary>
         public IUser Actor;
 
+
+        /// <summary>
+        /// The channel in which the message was posted.
+        /// </summary>
+        public ISocketMessageChannel Channel;
+
+
         /// <summary>
         /// Creates the arguments for a new action.
         /// </summary>
         /// <param name="sender">The ItemViewer this action is associated to.</param>
         /// <param name="actor">The user that triggered the action.</param>
-        public ActionArgs(ItemViewer sender, IUser actor) { Sender = sender; Actor = actor; }
+        public ActionArgs(ItemViewer sender, IUser actor, ISocketMessageChannel channel) { Sender = sender; Actor = actor; Channel = channel; }
     }
 }

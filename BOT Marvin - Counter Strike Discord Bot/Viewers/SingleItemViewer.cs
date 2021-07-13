@@ -25,22 +25,24 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
         {
             Item i = Items[Index].Get();
             EmbedBuilder eb = new EmbedBuilder();
+            var p = new ViewerPage(eb);
             if (i.getType() == ItemType.Skin)
                 eb.Title = ((SkinItem)i).WeaponName + " | " + i.Name;
             else
                 eb.Title = i.Name;
 
 
-            eb.AddField("Description", i.Description);
+            p.AddField("Description", i.Description);
             string pr = ((IEconomyItem)i).GetPrice().ToString();
-            if (pr.Length > 2)
-                eb.AddField("Price", "" + pr.Insert(pr.Length - 2, ",") + "€");
-            else
-                eb.AddField("Price", pr + " cents");
-            eb.AddField("Navigation", "React with ⬅ to navigate left, or with ➡ to navigate right. React with ❌ to close the viewer!");
+            p.AddField("Price", pr + " coins");
+            //if (pr.Length > 2)
+            //    p.AddField("Price", pr.Insert(pr.Length - 2, ",") + "€");
+            //else
+            //    p.AddField("Price", pr + " cents");
+            p.AddField("Navigation", "React with ⬅ to navigate left, or with ➡ to navigate right. React with ❌ to close the viewer!");
             
             eb.ImageUrl = i.ImageURL;
-            var p = new ViewerPage(eb);
+            
             Logger.Log(LogLevel.DEBUG, "Displaying item with index " + Index + " and name " + i.Name + ".");
             if (Index > 0)
             {

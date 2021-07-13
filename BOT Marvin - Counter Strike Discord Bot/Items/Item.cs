@@ -14,8 +14,20 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
     public abstract class Item
     {
         #region Equality Operators and similar
-        public static bool operator ==(Item a, Item b) { return a.ItemID == b.ItemID; }
-        public static bool operator !=(Item a, Item b) { return a.ItemID != b.ItemID; }
+        public static bool operator ==(Item a, Item b) {
+            if (a is null && b is null)
+                return true;
+            if (a is null || b is null)
+                return false;
+            return a.ItemID == b.ItemID;
+        }
+        public static bool operator !=(Item a, Item b) {
+            if (a is null && b is null)
+                return false;
+            if (a is null || b is null)
+                return true;
+            return a.ItemID == b.ItemID;
+        }
 
         public override bool Equals(Object a)
         {

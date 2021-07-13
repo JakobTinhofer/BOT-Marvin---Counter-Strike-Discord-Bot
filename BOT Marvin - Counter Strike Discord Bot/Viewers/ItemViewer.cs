@@ -42,6 +42,10 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
                         mod.Modify(Page, new ViewerDisplayArgs(User, this));
                     }
                 }
+                foreach (var item in Page.Fields.Values)
+                {
+                    Page.Page.AddField(item);
+                }
                 Logger.Log(LogLevel.DEBUG, "---> Finished building page and modifying it up to " + ViewerModifier.KnownModifiers.Count + " times!");
                 if (CurrentMessage == null)
                 {
@@ -125,7 +129,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
                     if(action.send403Msg)
                         Channel.SendMessageAsync("You are not allowed to interact with this, only " + action.usableBy.Username + " is!");
                 }
-                action.TriggerAction(new ActionArgs(this, actor));
+                action.TriggerAction(new ActionArgs(this, actor, Channel));
             }
         }
 

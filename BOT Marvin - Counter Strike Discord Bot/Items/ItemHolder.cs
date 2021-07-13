@@ -14,8 +14,20 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
     {
         #region Equality Operators and similar
 
-        public static bool operator==(ItemHolder<T> a, ItemHolder<T> b) { return a.Get() == b.Get(); }
-        public static bool operator!=(ItemHolder<T> a, ItemHolder<T> b) { return a.Get() != b.Get(); }
+        public static bool operator==(ItemHolder<T> a, ItemHolder<T> b) {
+            if (a is null && b is null)
+                return true;
+            if (a is null || b is null)
+                return false;
+            return a.Get() == b.Get();
+        }
+        public static bool operator!=(ItemHolder<T> a, ItemHolder<T> b) {
+            if (a is null && b is null)
+                return false;
+            if (a is null || b is null)
+                return true;
+            return a.Get() != b.Get(); 
+        }
 
         public override bool Equals(Object a)
         {

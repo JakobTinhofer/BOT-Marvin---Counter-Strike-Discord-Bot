@@ -15,9 +15,16 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
     /// </summary>
     public class CaseItem : Item, IEconomyItem, IDropableItem
     {
-        
 
-        
+
+        #region Methods
+
+        public ItemHolder<Item> OpenCase()
+        {
+
+        }
+
+        #endregion
 
         #region Constructor and Parsing
 
