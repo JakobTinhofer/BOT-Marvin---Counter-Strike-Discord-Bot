@@ -73,7 +73,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
             else
                 u = User.FromID(targetUser.Id);
 
-            await Logger.Log(LogLevel.INFO, "User " + Context.User.Username + ":" + Context.User.Id + " checking coin balance of " + (targetUser == null ? Context.User.Username : targetUser.Username) + ":" + u.UserID + ".");
+            Logger.Log(LogLevel.INFO, "User " + Context.User.Username + ":" + Context.User.Id + " checking coin balance of " + (targetUser == null ? Context.User.Username : targetUser.Username) + ":" + u.UserID + ".");
             
             await Context.Channel.SendMessageAsync((targetUser == null ? (Context.User.Username + ", you have ") : (targetUser.Username + " has ")) + u.Coins + " coins.");
         }
@@ -95,7 +95,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                     else
                         u = User.FromID(targetUser.Id);
                     u.Coins += amount;
-                    await Logger.Log(LogLevel.WARNING, "User " + Context.User.Username + ":" + Context.User.Id + " added " + amount + " coins to the account of " + (targetUser == null ? Context.User.Username : targetUser.Username) + ":" + u.UserID + " using the $addcoins command!");
+                    Logger.Log(LogLevel.WARNING, "User " + Context.User.Username + ":" + Context.User.Id + " added " + amount + " coins to the account of " + (targetUser == null ? Context.User.Username : targetUser.Username) + ":" + u.UserID + " using the $addcoins command!");
                     await Context.Channel.SendMessageAsync("Successfully added " + amount + " coins to the account of " + (targetUser == null ? Context.User.Username : targetUser.Username) + ".");
                 }
                 else

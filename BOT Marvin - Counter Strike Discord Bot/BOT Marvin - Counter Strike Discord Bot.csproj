@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="LightBlueFox.Util">
-      <HintPath>D:\Microsoft Visual Studio\lightbluefox-util\Util\bin\Release\netstandard2.0\LightBlueFox.Util.dll</HintPath>
+    <Reference Include="Util">
+      <HintPath>..\..\..\..\..\..\source\repos\lightbluefox-util\Util\bin\Release\netstandard2.0\Util.dll</HintPath>
     </Reference>
   </ItemGroup>
 

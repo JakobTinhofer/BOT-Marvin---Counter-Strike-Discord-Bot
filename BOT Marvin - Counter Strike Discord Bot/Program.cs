@@ -29,6 +29,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
         {
             ViewerModifier.InitViewerModifiers();
             Logger.AddLogWriter(new ConsoleLogWriter(LogLevel.ALL));
+            Logger.Log(LogLevel.INFO, "Starting discord bot ... connecting to server.");
             _CLIENT = new DiscordSocketClient();
             _CLIENT.Log += Log;
             _CLIENT.ReactionAdded += ViewerActionMaster.ReactionHandler;

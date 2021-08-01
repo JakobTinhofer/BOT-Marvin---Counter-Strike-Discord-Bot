@@ -64,7 +64,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
 
             // Execute the command with the command context we just
             // created, along with the service provider for precondition checks.
-            await Logger.Log(LogLevel.DEBUG, "Received command: " + message.ToString());
+            Logger.Log(LogLevel.DEBUG, "Received command: " + message.ToString());
             var res = _commands.Search(context, argPos);
             if (!res.IsSuccess || res.Commands.Count == 0)
                 await context.Channel.SendMessageAsync("Unknown command.");
