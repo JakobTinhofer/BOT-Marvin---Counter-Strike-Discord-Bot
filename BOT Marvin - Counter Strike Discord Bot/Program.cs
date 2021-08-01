@@ -22,7 +22,6 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
         private DiscordSocketClient _CLIENT;
         private CommandHandler _HANDLER;
         private CommandService _COMMANDSERVICE;
-        private string token = "ODU5NTA3Mzc5MTg4NDAwMTc4.YNtsoA.56r_z3mEh5ZpREnDv7PLHlOzJ6U";
 
 
         private async Task StartBot()
@@ -34,7 +33,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
             _CLIENT.Log += Log;
             _CLIENT.ReactionAdded += ViewerActionMaster.ReactionHandler;
             _CLIENT.ReactionRemoved += ViewerActionMaster.ReactionHandler;
-            await _CLIENT.LoginAsync(TokenType.Bot, token);
+            await _CLIENT.LoginAsync(TokenType.Bot, SettingsManager.Token);
             await _CLIENT.StartAsync();
             MongoInterface.Setup();
             _COMMANDSERVICE = new CommandService();
@@ -42,6 +41,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
             AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;   
             await _HANDLER.InstallCommandsAsync();
         }
+
 
         static void Main(string[] args)
             => new Program().AsyncMain().GetAwaiter().GetResult();
