@@ -21,7 +21,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
 
         public ItemHolder<Item> OpenCase()
         {
-
+            throw new NotImplementedException();
         }
 
         #endregion

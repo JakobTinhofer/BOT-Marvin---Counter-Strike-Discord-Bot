@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using LightBlueFox.Util.Logging;
 
 namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
 {

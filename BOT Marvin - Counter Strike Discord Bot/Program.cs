@@ -7,6 +7,7 @@ using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using LightBlueFox.Util.Logging;
 
 namespace BOT_Marvin___Counter_Strike_Discord_Bot
 {
@@ -27,7 +28,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
         private async Task StartBot()
         {
             ViewerModifier.InitViewerModifiers();
-            Logger.InitializeLogging();
+            Logger.AddLogWriter(new ConsoleLogWriter(LogLevel.ALL));
             _CLIENT = new DiscordSocketClient();
             _CLIENT.Log += Log;
             _CLIENT.ReactionAdded += ViewerActionMaster.ReactionHandler;

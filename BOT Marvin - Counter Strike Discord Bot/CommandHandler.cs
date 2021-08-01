@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using LightBlueFox.Util.Logging;
 
 namespace BOT_Marvin___Counter_Strike_Discord_Bot
 {
@@ -63,7 +64,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
 
             // Execute the command with the command context we just
             // created, along with the service provider for precondition checks.
-            Logger.Log(LogLevel.DEBUG, "Received command: " + message.ToString());
+            await Logger.Log(LogLevel.DEBUG, "Received command: " + message.ToString());
             var res = _commands.Search(context, argPos);
             if (!res.IsSuccess || res.Commands.Count == 0)
                 await context.Channel.SendMessageAsync("Unknown command.");
