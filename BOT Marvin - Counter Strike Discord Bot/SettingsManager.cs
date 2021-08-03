@@ -70,9 +70,13 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                 {
                     doc.Load(SettingsXML);
                 }
-                catch (Exception)
+                catch (FileNotFoundException)
                 {
                     Logger.Log(LogLevel.FATAL, "Settings cannot be found! Exiting....");
+                    Environment.Exit(1);
+                }catch(XmlException e)
+                {
+                    Logger.Log(LogLevel.FATAL, "Settings XML is invalid! Message: '" + e.Message + "'. Exiting....");
                     Environment.Exit(1);
                 }
                 
