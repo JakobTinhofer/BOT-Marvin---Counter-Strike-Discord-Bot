@@ -146,6 +146,21 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Users
                 Inventory.Add(ih, count);
             UpdateDB();
         }
+
+        public List<ItemHolder<Item>> GetItems()
+        {
+            List<ItemHolder<Item>> l = new List<ItemHolder<Item>>();
+            foreach (var pair in Inventory)
+            {
+                for (int i = 0; i < pair.Value; i++)
+                {
+                    l.Add(pair.Key);
+                }
+            }
+            return l;
+        }
+
+
         /// <summary>
         /// Removes an item from the player inventory. 
         /// </summary>

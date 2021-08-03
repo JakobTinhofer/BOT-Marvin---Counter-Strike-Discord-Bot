@@ -47,6 +47,8 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
         {
             await Task.Run(() => {
                 Logger.Log(LogLevel.DEBUG, "Handling show inventory command for user " + Context.User.Username + ":" + Context.User.Id + ".");
+                BOT_Marvin___Counter_Strike_Discord_Bot.Users.User u = User.FromID(Context.User.Id);
+                SingleItemViewer v = new SingleItemViewer(u.GetItems(), Context.Channel, Context.User, 0);
             });
         }
 

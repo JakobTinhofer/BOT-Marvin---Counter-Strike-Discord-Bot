@@ -22,6 +22,12 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
             Index = startIndex;
         }
 
+        public SingleItemViewer(List<ItemHolder<Item>> items, ISocketMessageChannel channel, SocketUser requester, int startIndex) : base(items, channel, requester)
+        {
+            Index = startIndex;
+        }
+
+
         public override ViewerPage Display()
         {
             Item i = Items[Index].Get();
