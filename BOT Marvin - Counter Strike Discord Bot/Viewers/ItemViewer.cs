@@ -26,6 +26,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
         protected SocketUser User { private set; get; }
         public List<ItemHolder<Item>> Items { get; private set; } = new List<ItemHolder<Item>>();
         public ViewerPage Page { get; private set; }
+        public List<ViewerModifier> Modifiers;
         public abstract ViewerPage Display();
         #endregion
 
@@ -36,12 +37,9 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
             await Task.Run(() => {
                 Logger.Log(LogLevel.DEBUG, "Running Update!");
                 Page = Display();
-                foreach (var mod in ViewerModifier.KnownModifiers)
+                foreach (var mod in Modifiers)
                 {
-                    if (mod.isApplicable(Page, new ViewerDisplayArgs(User, this)))
-                    {
-                        mod.Modify(Page, new ViewerDisplayArgs(User, this));
-                    }
+                    mod.Modify(Page, new ViewerDisplayArgs(User, this));
                 }
                 foreach (var item in Page.Fields.Values)
                 {
@@ -96,6 +94,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
 
         public ItemViewer(List<ItemHolder<Item>> items, ISocketMessageChannel channel, SocketUser requester)
         {
+            Modifiers = ViewerModifier.KnownModifiers;
             Items = items;
             Channel = channel;
             User = requester;
@@ -105,6 +104,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
 
         public ItemViewer(List<BsonDocument> items, ISocketMessageChannel channel, SocketUser requester)
         {
+            Modifiers = ViewerModifier.KnownModifiers;
             Logger.Log(LogLevel.DEBUG, "Creating new Item Viewer from BSON Documents!");
             Channel = channel;
             User = requester;

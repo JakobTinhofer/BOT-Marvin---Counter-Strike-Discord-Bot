@@ -5,6 +5,7 @@ using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using LightBlueFox.Util;
 
 namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Actions
 {
@@ -35,6 +36,13 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Actions
                     return;
                 }
             }
+
+            var item = i.OpenCase();
+            var l = new List<ItemHolder<Item>>();
+            l.Add(new ItemHolder<Item>(item.Get()));
+            u.AddItem(item.Get().ItemID);
+            args.Sender.Destroy();
+            SingleItemViewer v = new SingleItemViewer(l, args.Channel, (SocketUser)args.Actor, 0);
             
         }
     }

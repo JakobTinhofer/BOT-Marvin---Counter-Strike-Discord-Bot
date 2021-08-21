@@ -1,6 +1,7 @@
 ﻿using BOT_Marvin___Counter_Strike_Discord_Bot.Users;
 using Discord;
 using Discord.Rest;
+using LightBlueFox.Util;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -18,10 +19,17 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
 
 
         #region Methods
-
-        public ItemHolder<Item> OpenCase()
+        /// <summary>
+        /// Returns a random item from the content.
+        /// </summary>
+        public ItemHolder<SkinItem> OpenCase()
         {
-            throw new NotImplementedException();
+            ProbabilityList<ItemHolder<SkinItem>> l = new ProbabilityList<ItemHolder<SkinItem>>();
+            foreach (var item in Content)
+            {
+                l.Add(item, ((ItemHolder<SkinItem>)item).Get().Rarity.ProbabilityValue);
+            }
+            return l.GetRandomItem();
         }
 
         #endregion
@@ -53,16 +61,16 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
         /// </summary>
         /// <param name="caseBSON">The BSON Document used to create this item</param>
         /// <returns>A list of <see cref="SkinItem"/>s that are in this case</returns>
-        private List<ItemHolder<CaseItem>> ParseContent(BsonDocument caseBSON)
+        private List<ItemHolder<SkinItem>> ParseContent(BsonDocument caseBSON)
         {
-            List<ItemHolder<CaseItem>> conLi = new List<ItemHolder<CaseItem>>();
+            List<ItemHolder<SkinItem>> conLi = new List<ItemHolder<SkinItem>>();
             var li = caseBSON["content-list"].AsBsonArray.ToList();
 
             foreach (ObjectId id in li)
             {
                 var filter = Builders<BsonDocument>.Filter.Eq("_id", id);
                 var skin = MongoInterface.db.GetCollection<BsonDocument>("items").Find(filter).ToList()[0];
-                conLi.Add(new ItemHolder<CaseItem>(skin));
+                conLi.Add(new ItemHolder<SkinItem>(skin));
             }
             return conLi;
         }
@@ -132,7 +140,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
         /// <summary>
         /// A list of all skin items contained.
         /// </summary>
-        public List<ItemHolder<CaseItem>> Content { get; private set; } = new List<ItemHolder<CaseItem>>();
+        public List<ItemHolder<SkinItem>> Content { get; private set; } = new List<ItemHolder<SkinItem>>();
 
         /// <summary>
         /// Is openable.

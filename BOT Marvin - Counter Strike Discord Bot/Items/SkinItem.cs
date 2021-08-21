@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
+using LightBlueFox.Util.Logging;
 
 namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
 {
@@ -113,10 +114,16 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
     /// </summary>
     public class SkinRarity
     {
+        public static readonly Color UnknownRarityColor = Color.LightGrey;
+        public static readonly int UnkownRarityProbabilityValue = 1;
         /// <summary>
         /// How Valuable this skin is. From 0 to 6, higher -> more valuable.
         /// </summary>
         public int Value { get; private set; }
+
+        public int ProbabilityValue { get; private set; }
+
+        public string Name { get; private set; }
 
         /// <summary>
         /// The Color corresponding to the rarity.
@@ -128,19 +135,25 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
         /// </summary>
         /// <param name="val"><see cref="Value"/></param>
         /// <param name="col"><see cref="Color"/></param>
-        private SkinRarity(int val, Color col)
+        private SkinRarity(string name, int val, Color col, int probabilityValue)
         {
+            Name = name;
             Value = val;
             Color = col;
+            ProbabilityValue = probabilityValue;
         }
 
-        public static readonly SkinRarity ConsumerGrade = new SkinRarity(0, new Color(65, 60, 243));
-        public static readonly SkinRarity IndustrialGrade = new SkinRarity(1, new Color(69, 141, 217));
-        public static readonly SkinRarity Mil_SpecGrade = new SkinRarity(2, new Color(65, 60, 243));
-        public static readonly SkinRarity Restricted = new SkinRarity(3, new Color(65, 60, 243));
-        public static readonly SkinRarity Classified = new SkinRarity(4, new Color(211, 43, 159));
-        public static readonly SkinRarity Covert = new SkinRarity(5, new Color(170, 64, 65));
-        public static readonly SkinRarity Contraband = new SkinRarity(6, new Color(228, 146, 53));
+        private static int rarityIndex = 0;
+
+        public static readonly SkinRarity ConsumerGrade = new SkinRarity("Consumer Grade", rarityIndex++, new Color(65, 60, 243), 260);
+        public static readonly SkinRarity IndustrialGrade = new SkinRarity("Industrial Grade", rarityIndex++, new Color(69, 141, 217), 260);
+        public static readonly SkinRarity Mil_Spec = new SkinRarity("Mil-Spec", rarityIndex++, new Color(65, 60, 243), 260);
+        public static readonly SkinRarity Restricted = new SkinRarity("Restricted", rarityIndex++, new Color(65, 60, 243), 160);
+        public static readonly SkinRarity Exceptional = new SkinRarity("Exceptional", rarityIndex++, new Color(65, 60, 243), 160);
+        public static readonly SkinRarity Classified = new SkinRarity("Classified", rarityIndex++, new Color(211, 43, 159), 32);
+        public static readonly SkinRarity Covert = new SkinRarity("Covert", rarityIndex++, new Color(170, 64, 65), 6);
+        public static readonly SkinRarity Extraordinary = new SkinRarity("Extraordinary", rarityIndex++, new Color(170, 64, 65), 6);
+        public static readonly SkinRarity Contraband = new SkinRarity("Contraband", rarityIndex++, new Color(228, 146, 53), 3);
 
 
         private static Dictionary<string, SkinRarity> byString;
@@ -160,14 +173,17 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
                 {
                     if(field.FieldType == typeof(SkinRarity) && field.IsStatic)
                     {
-                        byString.Add(field.Name, (SkinRarity)field.GetValue(null));
+                        var r = (SkinRarity)field.GetValue(null);
+                        byString.Add(r.Name, r);
                     }
                 }
             }
 
-
-            return byString[input];
-
+            if(byString.ContainsKey(input))
+                return byString[input];
+            Logger.Log(LogLevel.ERROR, "Unknown rarity '{0}' ecountered while trying to parse object.", input);
+            Logger.Log(LogLevel.INFO, "Adding new rarity '{0}' with default color and probability.", input);
+            return new SkinRarity(input, rarityIndex++, UnknownRarityColor, UnkownRarityProbabilityValue);
             
             
         }

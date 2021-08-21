@@ -6,10 +6,10 @@ using System.Text;
 
 namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Modifiers
 {
-    [ViewerModifier]
+    [ViewerModifier(true)]
     public class CaseModifier : ViewerModifier
     {
-        public override bool isApplicable(ViewerPage page, ViewerDisplayArgs args)
+        protected override bool _isApplicable(ViewerPage page, ViewerDisplayArgs args)
         {
 
             var s = args.Sender as SingleItemViewer;
@@ -22,10 +22,8 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Modifiers
             return false;
         }
 
-        public override ViewerPage Modify(ViewerPage page, ViewerDisplayArgs args)
+        protected override ViewerPage _modify(ViewerPage page, ViewerDisplayArgs args)
         {
-            if (!isApplicable(page, args))
-                throw new InvalidOperationException("The modifier is applied even though it is not applicable!");
 
             var siv = args.Sender as SingleItemViewer;
             CaseItem it = siv.GetDisplayedItem() as CaseItem;

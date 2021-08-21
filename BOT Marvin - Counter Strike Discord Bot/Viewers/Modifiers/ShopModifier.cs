@@ -6,12 +6,12 @@ using System.Text;
 
 namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Modifiers
 {
-    [ViewerModifier]
+    [ViewerModifier(true)]
     public class ShopModifier : ViewerModifier
     {
         
 
-        public override bool isApplicable(ViewerPage page, ViewerDisplayArgs args)
+        protected override bool _isApplicable(ViewerPage page, ViewerDisplayArgs args)
         {
             var s = args.Sender as SingleItemViewer;
             if (s != null) {
@@ -25,10 +25,8 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Modifiers
             return false;
         }
 
-        public override ViewerPage Modify(ViewerPage page, ViewerDisplayArgs args)
+        protected override ViewerPage _modify(ViewerPage page, ViewerDisplayArgs args)
         {
-            if (!isApplicable(page, args))
-                return page;
 
             var siv = args.Sender as SingleItemViewer;
 
