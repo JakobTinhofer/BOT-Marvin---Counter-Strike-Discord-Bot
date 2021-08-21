@@ -29,6 +29,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                     var filter = Builders<BsonDocument>.Filter.Eq("item-type", "Case");
                     var items = col.Find(filter).ToList();
                     Logger.Log(LogLevel.DEBUG, "Cases retrieved from database. Total: " + items.Count + " cases.");
+                    Context.Message.DeleteAsync();
                     SingleItemViewer v = new SingleItemViewer(items, Context.Channel, Context.User, 0);
                 }
                 catch (Exception e)
@@ -48,6 +49,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
             await Task.Run(() => {
                 Logger.Log(LogLevel.DEBUG, "Handling show inventory command for user " + Context.User.Username + ":" + Context.User.Id + ".");
                 BOT_Marvin___Counter_Strike_Discord_Bot.Users.User u = User.FromID(Context.User.Id);
+                Context.Message.DeleteAsync();
                 SingleItemViewer v = new SingleItemViewer(u.GetItems(), Context.Channel, Context.User, 0);
             });
         }

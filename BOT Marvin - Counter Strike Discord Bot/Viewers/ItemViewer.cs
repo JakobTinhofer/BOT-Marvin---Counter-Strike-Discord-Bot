@@ -27,7 +27,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
         public List<ItemHolder<Item>> Items { get; private set; } = new List<ItemHolder<Item>>();
         public ViewerPage Page { get; private set; }
         public List<ViewerModifier> Modifiers;
-        public abstract ViewerPage Display();
+        protected abstract ViewerPage Display();
         #endregion
 
         #region Methods
@@ -72,8 +72,16 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
                     }
                 }
                 actionsByEmoji = newActions;
-
-                
+                List<IEmote> reactionsToRemove = new List<IEmote>();
+                foreach (var item in CurrentMessage.Reactions)
+                {
+                    if (!actionsByEmoji.ContainsKey(item.Key))
+                        reactionsToRemove.Add(item.Key);
+                }
+                foreach (var r in reactionsToRemove)
+                {
+                    CurrentMessage.RemoveAllReactionsForEmoteAsync(r);
+                }
 
                 Logger.Log(LogLevel.DEBUG, "---> Registered " + newActions.Count + " actions!");
             });
@@ -92,19 +100,19 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
         #region Constructors And Static Viewer Dictionaries
         public static Dictionary<ulong, ItemViewer> ViewerByMessageID = new Dictionary<ulong, ItemViewer>();
 
-        public ItemViewer(List<ItemHolder<Item>> items, ISocketMessageChannel channel, SocketUser requester)
+        public ItemViewer(List<ItemHolder<Item>> items, ISocketMessageChannel channel, SocketUser requester, bool displayImidiately)
         {
-            Modifiers = ViewerModifier.KnownModifiers;
+            Modifiers = new List<ViewerModifier>(ViewerModifier.KnownModifiers);
             Items = items;
             Channel = channel;
             User = requester;
-
-            UpdateAsync();
+            if(displayImidiately)
+                UpdateAsync();
         }
 
-        public ItemViewer(List<BsonDocument> items, ISocketMessageChannel channel, SocketUser requester)
+        public ItemViewer(List<BsonDocument> items, ISocketMessageChannel channel, SocketUser requester, bool displayImidiately)
         {
-            Modifiers = ViewerModifier.KnownModifiers;
+            Modifiers = new List<ViewerModifier>(ViewerModifier.KnownModifiers);
             Logger.Log(LogLevel.DEBUG, "Creating new Item Viewer from BSON Documents!");
             Channel = channel;
             User = requester;
@@ -113,7 +121,8 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
                 this.Items.Add(new ItemHolder<Item>(b));
             }
             Logger.Log(LogLevel.DEBUG, "Finished Parsing " + Items.Count + " items!");
-            UpdateAsync();
+            if(displayImidiately)
+                UpdateAsync();
         }
 
         #endregion

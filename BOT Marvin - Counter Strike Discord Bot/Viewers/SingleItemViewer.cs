@@ -17,18 +17,18 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
 
         public int Index { get; private set; }
 
-        public SingleItemViewer(List<BsonDocument> items, ISocketMessageChannel channel, SocketUser requester, int startIndex) : base(items, channel, requester)
+        public SingleItemViewer(List<BsonDocument> items, ISocketMessageChannel channel, SocketUser requester, int startIndex, bool displayImidiately = true) : base(items, channel, requester, displayImidiately)
         {
             Index = startIndex;
         }
 
-        public SingleItemViewer(List<ItemHolder<Item>> items, ISocketMessageChannel channel, SocketUser requester, int startIndex) : base(items, channel, requester)
+        public SingleItemViewer(List<ItemHolder<Item>> items, ISocketMessageChannel channel, SocketUser requester, int startIndex, bool displayImidiately = true) : base(items, channel, requester, displayImidiately)
         {
             Index = startIndex;
         }
 
 
-        public override ViewerPage Display()
+        protected override ViewerPage Display()
         {
             Item i = Items[Index].Get();
             EmbedBuilder eb = new EmbedBuilder();
