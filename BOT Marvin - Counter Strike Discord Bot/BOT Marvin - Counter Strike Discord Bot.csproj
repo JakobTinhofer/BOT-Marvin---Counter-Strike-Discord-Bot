@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <Reference Include="Util">
-      <HintPath>..\..\..\..\..\..\source\repos\lightbluefox-util\Util\bin\Release\netstandard2.0\Util.dll</HintPath>
+      <HintPath>..\..\lightbluefox-util\Util\bin\Release\netstandard2.0\Util.dll</HintPath>
     </Reference>
   </ItemGroup>
 

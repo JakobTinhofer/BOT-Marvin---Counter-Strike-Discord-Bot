@@ -36,7 +36,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Modifiers
             if(u.CountItem(it.ItemID) > 0)
             {
                 page.PageActions.Add(new Actions.OpenCaseAction(args.CommandRequester, true));
-                page.AddField("Open this crate", args.CommandRequester.Username + ", since you own " + u.CountItem(it.ItemID) + " crates can open this crate by reacting with " + "🔑" + ".");
+                page.AddField("Open this crate", args.CommandRequester.Username + ", since you own " + u.CountItem(it.ItemID) + " crates you can open this crate by reacting with " + "🔑" + ".");
             }
 
             return page;
