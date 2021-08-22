@@ -58,10 +58,18 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                 message.HasMentionPrefix(_client.CurrentUser, ref argPos)))
                 return;
 
+            
+
 
             // Create a WebSocket-based command context based on the message
             var context = new SocketCommandContext(_client, message);
 
+            if (!SettingsManager.ChannelIDs.Contains(context.Channel.Id))
+            {
+                await context.Channel.SendMessageAsync("You are not allowed to use the bot in this channel!");
+                return;
+            }
+                
             // Execute the command with the command context we just
             // created, along with the service provider for precondition checks.
             Logger.Log(LogLevel.DEBUG, "Received command: " + message.ToString());

@@ -7,27 +7,28 @@ using System.Text;
 
 namespace BOT_Marvin___Counter_Strike_Discord_Bot
 {
-    public class ActivityMonitor
+    public static class ActivityMonitor
     {
-        private DiscordRestClient restClient;
-        private DiscordSocketClient client;
-        private SocketGuild guild;
-        public ActivityMonitor(string token, ulong guildID, DiscordSocketClient client)
+        private static DiscordSocketClient Client;
+        public static void Init(DiscordSocketClient client)
         {
-            this.client = client;
-            restClient = new DiscordRestClient();
-            restClient.LoginAsync(TokenType.Bot, token).Wait();
-            guild = client.GetGuild(guildID);
+            Client = client;
         }
 
-        public List<ulong> GetActiveUsers()
+        public static List<ulong> GetActiveUsers()
         {
             List<ulong> userIDs = new List<ulong>();
-            foreach(var channel in guild.Channels)
+            foreach (var guild in Client.Guilds)
             {
-                foreach (var user in channel.Users)
+                foreach (SocketVoiceChannel channel in guild.VoiceChannels)
                 {
-                    userIDs.Add(user.Id);
+                    
+                    foreach (var user in channel.Users)
+                    {
+                        if (user.IsBot || user.IsSelfDeafened)
+                            continue;
+                        userIDs.Add(user.Id);
+                    }
                 }
             }
             return userIDs;

@@ -84,5 +84,24 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
             isInitialized = true;
 
         }
+        private static List<ulong> _channelID;
+        public static List<ulong> ChannelIDs
+        {
+            get {
+                if(_channelID == null)
+                {
+
+                    _channelID = new List<ulong>();
+                    foreach (XmlNode x in doc.GetElementsByTagName("channel"))
+                    {
+                        if (x.NodeType == XmlNodeType.Element)
+                        {
+                            _channelID.Add(Convert.ToUInt64(x.InnerXml));
+                        }
+                    }
+                }
+                return _channelID;
+            }
+        }
     }
 }

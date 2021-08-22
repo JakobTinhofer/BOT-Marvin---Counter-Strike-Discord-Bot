@@ -13,6 +13,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
 {
     class Program
     {
+
         private Task Log(LogMessage msg)
         {
             Logger.Log(LogLevel.INFO, msg.ToString());
@@ -38,7 +39,9 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
             MongoInterface.Setup();
             _COMMANDSERVICE = new CommandService();
             _HANDLER = new CommandHandler(_CLIENT, _COMMANDSERVICE, '$');
-            AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;   
+            AppDomain.CurrentDomain.ProcessExit += CurrentDomain_ProcessExit;
+            ActivityMonitor.Init(_CLIENT);
+            ActivityRewarder.StartGivingActivityRewards();
             await _HANDLER.InstallCommandsAsync();
         }
 
@@ -56,6 +59,6 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
 
         }
 
-       
+        
     }
 }

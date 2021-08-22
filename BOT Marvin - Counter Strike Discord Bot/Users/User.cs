@@ -199,6 +199,23 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Users
             return arr;
         }
 
+        public int InventorySize { get
+            {
+                int count = 0;
+                foreach (var x in Inventory)
+                {
+                    count += x.Value;
+                }
+                return count;
+            } 
+        }
+
+        public void ClearInventory()
+        {
+            Inventory.Clear();
+            UpdateDB();
+        }
+
         private void UpdateDB()
         {
             var filter = Builders<BsonDocument>.Filter.Eq("user_id", UserID);
