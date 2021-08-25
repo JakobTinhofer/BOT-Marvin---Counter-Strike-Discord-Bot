@@ -18,11 +18,14 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
         public static string Token { get {
                 if(_token == null)
                 {
+                    if (!isInitialized)
+                        Initialize();
                     string val = doc.GetElementsByTagName("token")[0].InnerText;
                     if(val == "" || val == "NOT SET")
                     {
+                        Logger.Log(LogLevel.ERROR, "Token has not been set yet! Please manually enter the discord API token.");
                         ConsoleLogWriter.ConsoleAvailable.WaitOne();
-                        Console.Write("Path: ");
+                        Console.Write("Token: ");
                         _token = Console.ReadLine().Trim();
                         doc.GetElementsByTagName("token")[0].InnerText = _token;
                         writeSettings();
@@ -61,14 +64,28 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                     }
                     catch (FileNotFoundException)
                     {
-                        Logger.Log(LogLevel.FATAL, "Settings cannot be found! Exiting....");
-                        Environment.Exit(1);
+                        Logger.Log(LogLevel.ERROR, "Settings cannot be found! Please manually enter the path....");
+                        while (true)
+                        {
+                            Console.Write("Path: ");
+                            SettingsXML = Console.ReadLine();
+                            try
+                            {
+                                doc.Load(SettingsXML);
+                                break;
+                            }
+                            catch (FileNotFoundException)
+                            {
+                                Logger.Log(LogLevel.ERROR, "Invalid Path! Try again:");
+                            }
+                            catch (XmlException e)
+                            {
+                                Logger.Log(LogLevel.FATAL, "Settings XML is invalid! Message: '" + e.Message + "'. Exiting....");
+                                Environment.Exit(1);
+                            }
+                        }
                     }
-                    catch (XmlException e)
-                    {
-                        Logger.Log(LogLevel.FATAL, "Settings XML is invalid! Message: '" + e.Message + "'. Exiting....");
-                        Environment.Exit(1);
-                    }
+                    
                 }
                 
             }
