@@ -10,8 +10,6 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
     public static class SettingsManager
     {
         private static string SettingsXML = "settings.xml";
-
-        private static string tokenPath;
         private static string _token = null;
         private static bool isInitialized = false;
 
@@ -20,25 +18,16 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
         public static string Token { get {
                 if(_token == null)
                 {
-                    updateTokenPath();
-                    while (true)
+                    string val = doc.GetElementsByTagName("token")[0].InnerText;
+                    if(val == "" || val == "NOT SET")
                     {
-                        try
-                        {
-                            _token = File.ReadAllText(tokenPath).Trim();
-                            break;
-                        }
-                        catch (Exception)
-                        {
-                            Logger.Log(LogLevel.ERROR, "Token not at file path! Please enter the path to the token:");
-                            ConsoleLogWriter.ConsoleAvailable.WaitOne();
-                            Console.Write("Path: ");
-                            tokenPath = Console.ReadLine();
-                            ConsoleLogWriter.ConsoleAvailable.Set();
-                        }
+                        ConsoleLogWriter.ConsoleAvailable.WaitOne();
+                        Console.Write("Path: ");
+                        _token = Console.ReadLine().Trim();
+                        doc.GetElementsByTagName("token")[0].InnerText = _token;
+                        writeSettings();
                     }
-                    doc.GetElementsByTagName("tokenPath")[0].InnerText = tokenPath;
-                    writeSettings();
+                    _token = doc.GetElementsByTagName("token")[0].InnerText;
                 }
                 return _token;           
             }
@@ -47,13 +36,6 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
         private static void writeSettings()
         {
             doc.Save(File.OpenWrite(SettingsXML));
-        }
-
-        private static void updateTokenPath()
-        {
-            if (!isInitialized)
-                Initialize();
-            tokenPath = doc.GetElementsByTagName("tokenPath")[0].InnerText;
         }
 
         private static void Initialize()
@@ -72,12 +54,21 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                 }
                 catch (FileNotFoundException)
                 {
-                    Logger.Log(LogLevel.FATAL, "Settings cannot be found! Exiting....");
-                    Environment.Exit(1);
-                }catch(XmlException e)
-                {
-                    Logger.Log(LogLevel.FATAL, "Settings XML is invalid! Message: '" + e.Message + "'. Exiting....");
-                    Environment.Exit(1);
+                    SettingsXML = "../settings.xml";
+                    try
+                    {
+                        doc.Load(SettingsXML);
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        Logger.Log(LogLevel.FATAL, "Settings cannot be found! Exiting....");
+                        Environment.Exit(1);
+                    }
+                    catch (XmlException e)
+                    {
+                        Logger.Log(LogLevel.FATAL, "Settings XML is invalid! Message: '" + e.Message + "'. Exiting....");
+                        Environment.Exit(1);
+                    }
                 }
                 
             }

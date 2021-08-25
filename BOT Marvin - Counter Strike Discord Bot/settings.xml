@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <settings>
-  <tokenPath>D:\CertsAndTokens\discord_bot_marvin_token.txt</tokenPath>
+  <token>NOT SET</token>
   <channel>879058328452497439</channel>
   <channel>533316385665712170</channel>
 </settings>
