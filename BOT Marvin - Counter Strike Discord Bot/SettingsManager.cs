@@ -36,6 +36,27 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
             }
         }
 
+        private static List<string> _mongoips;
+        public static List<string> MongoIPs
+        {
+            get
+            {
+                if (_mongoips == null)
+                {
+
+                    _mongoips = new List<string>();
+                    foreach (XmlNode x in doc.GetElementsByTagName("mongo-ip"))
+                    {
+                        if (x.NodeType == XmlNodeType.Element)
+                        {
+                            _mongoips.Add(x.InnerXml);
+                        }
+                    }
+                }
+                return _mongoips;
+            }
+        }
+
         private static void writeSettings()
         {
             doc.Save(File.OpenWrite(SettingsXML));
