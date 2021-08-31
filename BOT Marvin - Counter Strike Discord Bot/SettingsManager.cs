@@ -43,7 +43,8 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
             {
                 if (_mongoips == null)
                 {
-
+                    if (!isInitialized)
+                        Initialize();
                     _mongoips = new List<string>();
                     foreach (XmlNode x in doc.GetElementsByTagName("mongo-ip"))
                     {
@@ -64,26 +65,25 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
 
         private static void Initialize()
         {
-            
             doc = new XmlDocument();
             try
             {
                 doc.Load(SettingsXML);
             }catch(Exception)
             {
-                SettingsXML = "../../../settings.xml";
+                SettingsXML = "publish/settings.xml";
                 try
                 {
                     doc.Load(SettingsXML);
                 }
-                catch (FileNotFoundException)
+                catch (Exception)
                 {
                     SettingsXML = "../settings.xml";
                     try
                     {
                         doc.Load(SettingsXML);
                     }
-                    catch (FileNotFoundException)
+                    catch (Exception)
                     {
                         Logger.Log(LogLevel.ERROR, "Settings cannot be found! Please manually enter the path....");
                         while (true)
@@ -95,14 +95,14 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                                 doc.Load(SettingsXML);
                                 break;
                             }
-                            catch (FileNotFoundException)
-                            {
-                                Logger.Log(LogLevel.ERROR, "Invalid Path! Try again:");
-                            }
                             catch (XmlException e)
                             {
                                 Logger.Log(LogLevel.FATAL, "Settings XML is invalid! Message: '" + e.Message + "'. Exiting....");
                                 Environment.Exit(1);
+                            }
+                            catch (Exception)
+                            {
+                                Logger.Log(LogLevel.ERROR, "Invalid Path! Try again:");
                             }
                         }
                     }
@@ -132,5 +132,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                 return _channelID;
             }
         }
+
+        public static bool IsDevEnv = false;
     }
 }

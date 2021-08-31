@@ -12,16 +12,26 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
     {
         private static MongoClient dbClient;
         public static IMongoDatabase db;
-        public static string connectionTemplate = "mongodb://{#mongo-ip#}:27017/?socketTimeoutMS=300";
+        public static string connectionTemplate = "mongodb://{#mongo-ip#}/";
         public static void Setup()
         {
+            if (SettingsManager.IsDevEnv)
+                SettingsManager.MongoIPs.Insert(0, "localhost:27017");
+
+
             foreach (var ip in SettingsManager.MongoIPs)
             {
-                Logger.Log(LogLevel.INFO, "Trying to connect to mongodb at {0}.", ip);
+                Logger.Log(LogLevel.INFO, "Trying to connect to mongodb at {0}.", connectionTemplate.Replace("{#mongo-ip#}", ip));
                 try
                 {
-                    dbClient = new MongoClient(connectionTemplate.Replace("{#mongo-ip#}", "ip"));
+                    var settings = MongoClientSettings.FromConnectionString(connectionTemplate.Replace("{#mongo-ip#}", ip));
+                    settings.SocketTimeout = TimeSpan.FromMilliseconds(300);
+                    settings.ConnectTimeout = TimeSpan.FromMilliseconds(300);
+                    dbClient = new MongoClient(settings);
+                    if (dbClient.GetDatabase("csgo-discord-bot").RunCommandAsync((Command<BsonDocument>)"{ping:1}").GetAwaiter().GetResult().GetValue("ok") != 1)
+                        throw new Exception("Ping failed!");
                     Logger.Log(LogLevel.INFO, "Connected to mongodb!");
+                    Logger.Log(LogLevel.DEBUG, "DBClient: {0}", dbClient.GetDatabase("csgo-discord-bot"));
                     break;
                 }
                 catch (Exception e)
@@ -30,9 +40,9 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                     Logger.Log(LogLevel.ERROR, "Tried to connect to mongodb at {0}, but the connection failed.", ip);
                     Logger.Log(LogLevel.DEBUG, "Error while trying to connect to mongo at {0}. Error: {1}.", ip, e);
                 }
-                
+
             }
-            if(dbClient != null)
+            if (dbClient != null)
                 db = dbClient.GetDatabase("csgo-discord-bot");
             else
             {
@@ -40,7 +50,6 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                 Environment.Exit(111);
             }
         }
-
         
     }
 }

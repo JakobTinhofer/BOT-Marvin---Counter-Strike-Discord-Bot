@@ -2,6 +2,7 @@
   "profiles": {
     "BOT Marvin - Counter Strike Discord Bot": {
       "commandName": "Project",
+      "commandLineArgs": "-dev",
       "remoteDebugEnabled": false
     }
   }

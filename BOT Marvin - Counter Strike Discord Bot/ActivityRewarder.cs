@@ -19,6 +19,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
             await Task.Run(() => {
                 while (true)
                 {
+                    
                     Enabled.WaitOne();
                     var users = ActivityMonitor.GetActiveUsers();
                     foreach (var user in users)
