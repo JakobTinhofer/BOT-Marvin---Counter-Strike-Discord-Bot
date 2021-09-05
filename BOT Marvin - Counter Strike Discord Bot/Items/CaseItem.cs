@@ -24,12 +24,23 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
         /// </summary>
         public ItemHolder<SkinItem> OpenCase()
         {
-            ProbabilityList<ItemHolder<SkinItem>> l = new ProbabilityList<ItemHolder<SkinItem>>();
+            ProbabilityList<ProbabilityList<ItemHolder<SkinItem>>> l = new ProbabilityList<ProbabilityList<ItemHolder<SkinItem>>>();
+            Dictionary<SkinRarity, ProbabilityList<ItemHolder<SkinItem>>> dict = new Dictionary<SkinRarity, ProbabilityList<ItemHolder<SkinItem>>>();
             foreach (var item in Content)
             {
-                l.Add(item, ((ItemHolder<SkinItem>)item).Get().Rarity.ProbabilityValue);
+                var i = item.Get();
+                if (!dict.ContainsKey(i.Rarity))
+                    dict[i.Rarity] = new ProbabilityList<ItemHolder<SkinItem>>();
+                    
+                dict[i.Rarity].Add(item, 10);
+
+                
             }
-            return l.GetRandomItem();
+            foreach (var list in dict)
+            {
+                l.Add(list.Value, list.Key.ProbabilityValue);
+            }
+            return l.GetRandomItem().GetRandomItem();
         }
 
         #endregion

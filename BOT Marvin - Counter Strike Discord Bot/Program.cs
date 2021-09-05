@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using LightBlueFox.Util.Logging;
+using BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff;
 
 namespace BOT_Marvin___Counter_Strike_Discord_Bot
 {
@@ -28,15 +29,26 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
         private async Task StartBot()
         {
             Logger.AddLogWriter(new ConsoleLogWriter(LogLevel.ALL));
+            SettingsManager.Initialize(cmdToken, cmdSettingsPath, cmdMongoIP);
             MongoInterface.Setup();
             ViewerModifier.InitViewerModifiers();
-            
             Logger.Log(LogLevel.INFO, "Starting discord bot! Connecting to discord api.");
             _CLIENT = new DiscordSocketClient();
             _CLIENT.Log += Log;
+            await _CLIENT.SetGameAsync("$help", type: ActivityType.Listening);
             _CLIENT.ReactionAdded += ViewerActionMaster.ReactionHandler;
             _CLIENT.ReactionRemoved += ViewerActionMaster.ReactionHandler;
-            await _CLIENT.LoginAsync(TokenType.Bot, SettingsManager.Token);
+            try
+            {
+                await _CLIENT.LoginAsync(TokenType.Bot, SettingsManager.Token);
+            }
+            catch (Exception e)
+            {
+                Logger.Log(LogLevel.FATAL, "Error authenticating with the discord api... Is the token correct? Error: {0}", e.Message);
+                Logger.Log(LogLevel.FATAL, "Fatal Error encountered while connecting to api. Exiting...");
+                Environment.Exit(999);
+            }
+            
             await _CLIENT.StartAsync();
             _COMMANDSERVICE = new CommandService();
             _HANDLER = new CommandHandler(_CLIENT, _COMMANDSERVICE, '$');
@@ -61,22 +73,52 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
 
         private void CurrentDomain_ProcessExit(object sender, EventArgs e)
         {
-
+            _CLIENT.Dispose();
         }
 
+
+        private static string cmdMongoIP = null;
+        private static string cmdToken = null;
+        private static string cmdSettingsPath = null;
         private static void HandleCMDLineArgs(string[] args)
         {
-            foreach (var a in args)
+            try
             {
-                switch (a.ToLower())
+                foreach (var a in args)
                 {
-                    case "-dev":
-                        SettingsManager.IsDevEnv = true;
-                        break;
-                    default:
-                        break;
+                    switch (a.ToLower())
+                    {
+                        case "-dev":
+                            SettingsManager.IsDevEnv = true;
+                            break;
+                        default:
+                            break;
+                        case "--token":
+                            var i = Array.FindIndex<string>(args, new Predicate<string>((string val) => { return val == "--token"; }));
+                            cmdToken = args[++i];
+                            break;
+                        case "--mongo":
+                            var i2 = Array.FindIndex<string>(args, new Predicate<string>((string val) => { return val == "--mongo"; }));
+                            cmdMongoIP = args[++i2];
+                            break;
+                        case "--settings":
+                            var i3 = Array.FindIndex<string>(args, new Predicate<string>((string val) => { return val == "--settings"; }));
+                            cmdToken = args[++i3];
+                            break;
+                    }
                 }
             }
+            catch (Exception)
+            {
+                Console.WriteLine("Invalid command line arguments.");
+            }
+            
+        }
+
+
+        private static void WriteCommandLineHelp(string program_name)
+        {
+            Console.WriteLine("Usage: {0} <command line options>");
         }
 
         

@@ -17,7 +17,7 @@ using LightBlueFox.Util;
 using BOT_Marvin___Counter_Strike_Discord_Bot.Items;
 using BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Modifiers;
 
-namespace BOT_Marvin___Counter_Strike_Discord_Bot
+namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
 {
     public class Commands : ModuleBase<SocketCommandContext>
     {
@@ -168,6 +168,12 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                 }
             });
             
+        }
+
+        [Command("help")]
+        public async Task HelpCommand()
+        {
+            await Context.Channel.SendMessageAsync("You can view your coin balance using $coins. You will gain coins for being in a voice channel. Using those coins, buy cases from $cases. View all owned items using $inv. When viewing a case of which you own atleast one, you can open it to get a skin. Also, you can use $drop to get a random item.");
         }
 
         [Command("clear_inventory")]

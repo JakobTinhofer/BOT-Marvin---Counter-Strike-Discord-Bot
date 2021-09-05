@@ -18,21 +18,13 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
         public static string Token { get {
                 if(_token == null)
                 {
-                    if (!isInitialized)
-                        Initialize();
-                    string val = doc.GetElementsByTagName("token")[0].InnerText;
-                    if(val == "" || val == "NOT SET")
-                    {
-                        Logger.Log(LogLevel.ERROR, "Token has not been set yet! Please manually enter the discord API token.");
-                        ConsoleLogWriter.ConsoleAvailable.WaitOne();
-                        Console.Write("Token: ");
-                        _token = Console.ReadLine().Trim();
-                        doc.GetElementsByTagName("token")[0].InnerText = _token;
-                        writeSettings();
-                    }
-                    _token = doc.GetElementsByTagName("token")[0].InnerText;
+                    Logger.Log(LogLevel.ERROR, "Token has not been set yet! Please manually enter the discord API token.");
+                    ConsoleLogWriter.ConsoleAvailable.WaitOne();
+                    Console.Write("Token: ");
+                    _token = Console.ReadLine().Trim();
                 }
-                return _token;           
+                return _token; 
+                
             }
         }
 
@@ -63,8 +55,12 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
             doc.Save(File.OpenWrite(SettingsXML));
         }
 
-        private static void Initialize()
+        public static void Initialize(string tkn = null, string settingsPath = null, string mip = null)
         {
+            _token = tkn;
+            SettingsXML = settingsPath == null ? SettingsXML : settingsPath;
+            if(mip != null)
+                _mongoips.Insert(0, mip);
             doc = new XmlDocument();
             try
             {
