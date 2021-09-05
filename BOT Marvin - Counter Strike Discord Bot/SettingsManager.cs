@@ -9,46 +9,13 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
 {
     public static class SettingsManager
     {
+        #region XML Parsing and Managing
+
         private static string SettingsXML = "settings.xml";
         private static string _token = null;
         private static bool isInitialized = false;
 
         private static XmlDocument doc;
-
-        public static string Token { get {
-                if(_token == null)
-                {
-                    Logger.Log(LogLevel.ERROR, "Token has not been set yet! Please manually enter the discord API token.");
-                    ConsoleLogWriter.ConsoleAvailable.WaitOne();
-                    Console.Write("Token: ");
-                    _token = Console.ReadLine().Trim();
-                }
-                return _token; 
-                
-            }
-        }
-
-        private static List<string> _mongoips;
-        public static List<string> MongoIPs
-        {
-            get
-            {
-                if (_mongoips == null)
-                {
-                    if (!isInitialized)
-                        Initialize();
-                    _mongoips = new List<string>();
-                    foreach (XmlNode x in doc.GetElementsByTagName("mongo-ip"))
-                    {
-                        if (x.NodeType == XmlNodeType.Element)
-                        {
-                            _mongoips.Add(x.InnerXml);
-                        }
-                    }
-                }
-                return _mongoips;
-            }
-        }
 
         private static void writeSettings()
         {
@@ -59,13 +26,14 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
         {
             _token = tkn;
             SettingsXML = settingsPath == null ? SettingsXML : settingsPath;
-            if(mip != null)
+            if (mip != null)
                 _mongoips.Insert(0, mip);
             doc = new XmlDocument();
             try
             {
                 doc.Load(SettingsXML);
-            }catch(Exception)
+            }
+            catch (Exception)
             {
                 SettingsXML = "publish/settings.xml";
                 try
@@ -102,13 +70,60 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                             }
                         }
                     }
-                    
+
                 }
-                
+
             }
             isInitialized = true;
 
         }
+
+        #endregion
+
+        #region Token
+        public static string Token { get {
+                if(_token == null)
+                {
+                    Logger.Log(LogLevel.ERROR, "Token has not been set yet! Please manually enter the discord API token.");
+                    ConsoleLogWriter.ConsoleAvailable.WaitOne();
+                    Console.Write("Token: ");
+                    _token = Console.ReadLine().Trim();
+                }
+                return _token; 
+                
+            }
+        }
+
+        #endregion
+
+        #region Mongo IPs
+
+        private static List<string> _mongoips;
+        public static List<string> MongoIPs
+        {
+            get
+            {
+                if (_mongoips == null)
+                {
+                    if (!isInitialized)
+                        Initialize();
+                    _mongoips = new List<string>();
+                    foreach (XmlNode x in doc.GetElementsByTagName("mongo-ip"))
+                    {
+                        if (x.NodeType == XmlNodeType.Element)
+                        {
+                            _mongoips.Add(x.InnerXml);
+                        }
+                    }
+                }
+                return _mongoips;
+            }
+        }
+
+        #endregion
+
+        #region Allowed Channel IDs
+
         private static List<ulong> _channelID;
         public static List<ulong> ChannelIDs
         {
@@ -129,6 +144,21 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
             }
         }
 
+        #endregion
+
+        #region Flags
+
         public static bool IsDevEnv = false;
+
+        #endregion
+
+        #region Texts
+
+        public static readonly string IntroductionString = "Hi! This is a small case opening simulator, packed into a discord bot! I hope you enjoy playing around with this, " + 
+                                                            "and if you don't, make sure to tell me why using the feedback command, or message me on Discord at Jakob#8695!";
+
+
+        #endregion
+
     }
 }

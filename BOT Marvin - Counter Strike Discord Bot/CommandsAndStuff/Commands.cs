@@ -1,21 +1,19 @@
-﻿using BOT_Marvin___Counter_Strike_Discord_Bot.Users;
+﻿using BOT_Marvin___Counter_Strike_Discord_Bot.Items;
+using BOT_Marvin___Counter_Strike_Discord_Bot.Users;
 using BOT_Marvin___Counter_Strike_Discord_Bot.Viewers;
+using BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Modifiers;
 using Discord;
 using Discord.Commands;
-using Discord.Rest;
 using Discord.WebSocket;
+using LightBlueFox.Util;
+using LightBlueFox.Util.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using LightBlueFox.Util.Logging;
-using LightBlueFox.Util;
-using BOT_Marvin___Counter_Strike_Discord_Bot.Items;
-using BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Modifiers;
 
 namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
 {
@@ -39,12 +37,12 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
                 {
                     Logger.Log(LogLevel.ERROR, e.ToString());
                 }
-                
+
             });
-            
+
         }
 
-        
+
         [Command("inventory", RunMode = RunMode.Async)]
         [Alias("inv")]
         public async Task ShowInventory()
@@ -52,8 +50,8 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
             await Task.Run(() => {
                 Logger.Log(LogLevel.DEBUG, "Handling show inventory command for user " + Context.User.Username + ":" + Context.User.Id + ".");
                 BOT_Marvin___Counter_Strike_Discord_Bot.Users.User u = User.FromID(Context.User.Id);
-                
-                if(u.InventorySize == 0)
+
+                if (u.InventorySize == 0)
                 {
                     Context.Channel.SendMessageAsync("You do not have any items yet.");
                 }
@@ -85,16 +83,20 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
         {
             User u;
             if (targetUser is null)
+            {
                 u = User.FromID(Context.User.Id);
+            }
             else
+            {
                 u = User.FromID(targetUser.Id);
+            }
 
             Logger.Log(LogLevel.INFO, "User " + Context.User.Username + ":" + Context.User.Id + " checking coin balance of " + (targetUser == null ? Context.User.Username : targetUser.Username) + ":" + u.UserID + ".");
-            
+
             await Context.Channel.SendMessageAsync((targetUser == null ? (Context.User.Username + ", you have ") : (targetUser.Username + " has ")) + u.Coins + " coins.");
         }
 
-        
+
         [Command("addcoins", RunMode = RunMode.Async)]
         public async Task AddCoins(int amount, IUser targetUser = null)
         {
@@ -107,9 +109,14 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
                 {
                     User u;
                     if (targetUser is null)
+                    {
                         u = User.FromID(Context.User.Id);
+                    }
                     else
+                    {
                         u = User.FromID(targetUser.Id);
+                    }
+
                     u.Coins += amount;
                     Logger.Log(LogLevel.WARNING, "User " + Context.User.Username + ":" + Context.User.Id + " added " + amount + " coins to the account of " + (targetUser == null ? Context.User.Username : targetUser.Username) + ":" + u.UserID + " using the $addcoins command!");
                     await Context.Channel.SendMessageAsync("Successfully added " + amount + " coins to the account of " + (targetUser == null ? Context.User.Username : targetUser.Username) + ".");
@@ -119,7 +126,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
                     await Context.Channel.SendMessageAsync("Sorry, you don't have permission to do that.");
                 }
             }
-            
+
         }
         private static Random r = new Random();
         public static Dictionary<ulong, LongCooldown> dropCooldownsByUser = new Dictionary<ulong, LongCooldown>();
@@ -167,14 +174,71 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
                     return;
                 }
             });
-            
+
         }
 
-        [Command("help")]
-        public async Task HelpCommand()
+        //[Command("help")]
+        //public async Task HelpCommand(string command = null)
+        //{
+        //    if (command == null)
+        //    {
+        //        EmbedBuilder em = new EmbedBuilder();
+        //        em.WithTitle("Help").Color = Color.Blue;
+        //        //em.AddField(new EmbedFieldBuilder().WithName("Introduction").WithValue(SettingsManager.IntroductionString));
+
+        //        public StringBuilder CommandListBuilder = new StringBuilder();
+        //    }
+
+    
+
+        //    await Context.Channel.SendMessageAsync("You can view your coin balance using $coins. You will gain coins for being in a voice channel. Using those coins, buy cases from $cases. View all owned items using $inv. When viewing a case of which you own atleast one, you can open it to get a skin. Also, you can use $drop to get a random item.");
+        //}
+
+
+        public async Task HelpCommand(string command = null)
         {
-            await Context.Channel.SendMessageAsync("You can view your coin balance using $coins. You will gain coins for being in a voice channel. Using those coins, buy cases from $cases. View all owned items using $inv. When viewing a case of which you own atleast one, you can open it to get a skin. Also, you can use $drop to get a random item.");
+            if(command == null)
+            {
+                EmbedBuilder em = new EmbedBuilder();
+                em.Title = "Help";
+                em.Color = Color.Blue;
+
+                em.AddField(new EmbedFieldBuilder().WithName("Introduction").WithValue(SettingsManager.IntroductionString));
+
+                StringBuilder commandListBuilder = new StringBuilder();
+                commandListBuilder.AppendLine("Format: $command <optional parameter> [required parameter]");
+                foreach (var cmdHelp in CommandHandler.CommandDescriptions.OrderBy(x => x.Name))
+                {
+                    commandListBuilder.Append("---->  $" + cmdHelp.Name);
+                    foreach (var item in cmdHelp.Parameters)
+                    {
+
+                        if (item.Parameter.IsOptional)
+                            commandListBuilder.Append(" <" + item.Name + ">");
+                        else
+                            commandListBuilder.Append(" [" + item.Name + "]");
+                    }
+                    commandListBuilder.AppendLine(" | " + cmdHelp.Attribute.OneLineDesc);
+                }
+
+                em.AddField(new EmbedFieldBuilder().WithName("List of Commands").WithValue(commandListBuilder.ToString()));
+                em.AddField(new EmbedFieldBuilder().WithName("More Info").WithValue("Want to know more about a command (like examples, parameter types, etc.)? Use $help <command-name>"));
+                await Context.Channel.SendMessageAsync("", false, em.Build());
+            }
+            else
+            {
+                HelpInfo cmdHelp = CommandHandler.CommandDescriptions.Where(p => p.Name == command).FirstOrDefault();
+                if(cmdHelp == default(HelpInfo))
+                {
+                    await Context.Channel.SendMessageAsync("This command is not known! Use $help without parameters to see a list of commands.");
+                }
+                else
+                {
+                    throw new NotImplementedException();
+                }
+            }
         }
+
 
         [Command("clear_inventory")]
         public async Task ClearInventory()

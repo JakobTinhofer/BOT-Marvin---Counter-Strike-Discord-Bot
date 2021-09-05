@@ -9,6 +9,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using LightBlueFox.Util.Logging;
+using System.Linq;
+using LightBlueFox.Util.Types.Exceptions;
+using Discord;
 
 namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
 {
@@ -17,6 +20,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
         private readonly char _prefix;
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
+        public static readonly List<HelpInfo> CommandDescriptions = new List<HelpInfo>();
 
         // Retrieve client and CommandService instance via ctor
         public CommandHandler(DiscordSocketClient client, CommandService commands, char prefix)
@@ -41,6 +45,21 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
             // See Dependency Injection guide for more information.
             await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(),
                                             services: null);
+            foreach (var item in _commands.Commands)
+            {
+                HelpAttribute attr;
+                List<ParameterHelpInfo> paramHelps = new List<ParameterHelpInfo>();
+                var parameters = item.Parameters;
+                foreach (var param in parameters)
+                {
+                    attr = param.Attributes.Where(p => p.GetType() == typeof(HelpAttribute)).FirstOrDefault() as HelpAttribute;
+                    paramHelps.Add(new ParameterHelpInfo(param.Name, attr, param));
+                }
+                
+                
+                attr = item.Attributes.Where(p => p.GetType() == typeof(HelpAttribute)).FirstOrDefault() as HelpAttribute;
+                CommandDescriptions.Add(new HelpInfo((HelpAttribute)attr, item.Name, item, paramHelps));
+            }
         }
 
         public async Task HandleCommandAsync(SocketMessage messageParam)
@@ -64,7 +83,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
             // Create a WebSocket-based command context based on the message
             var context = new SocketCommandContext(_client, message);
 
-            if (!SettingsManager.ChannelIDs.Contains(context.Channel.Id))
+            if (!SettingsManager.ChannelIDs.Contains(context.Channel.Id) && !context.Channel.GetType().IsAssignableFrom(typeof(IPrivateChannel)))
             {
                 await context.Channel.SendMessageAsync("You are not allowed to use the bot in this channel!");
                 return;
@@ -77,10 +96,26 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
             if (!res.IsSuccess || res.Commands.Count == 0)
                 await context.Channel.SendMessageAsync("Unknown command.");
 
-            await _commands.ExecuteAsync(
+            try
+            {
+                await _commands.ExecuteAsync(
                 context: context,
                 argPos: argPos,
                 services: null);
+            }
+            catch (FatalException ex)
+            {
+                Logger.Log(LogLevel.FATAL, "Fatal exception thrown while evaluating command {0}!!!!!!! Exception: {1}.", message.Content, ex.GetType().ToString());
+                Logger.Log(LogLevel.DEBUG, "Exception: {0}", ex);
+                await context.Channel.SendMessageAsync("Encountered a fatal error while trying to evaluate this command! Shutting down. Please contact me at Jakob#8695.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(LogLevel.ERROR, "Exception thrown while evaluating command {0}. Exception: {1}.", message.Content, ex.GetType().ToString());
+                Logger.Log(LogLevel.DEBUG, "Exception: {0}", ex);
+                await context.Channel.SendMessageAsync("Encountered an error while trying to evaluate this command.");
+            }
+            
         }
     }
 }
