@@ -19,7 +19,10 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
 {
     public class Commands : ModuleBase<SocketCommandContext>
     {
+        #region List Cases
+
         [Command("cases", RunMode = RunMode.Async)]
+        [Help("Lists available cases.")]
         public async Task ListCasesCommand()
         {
             await Task.Run(() => {
@@ -42,9 +45,13 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
 
         }
 
+        #endregion
 
-        [Command("inventory", RunMode = RunMode.Async)]
-        [Alias("inv")]
+        #region Show Inventory
+
+        [Command("inv", RunMode = RunMode.Async)]
+        [Alias("inventory")]
+        [Help("Shows your inventory.")]
         public async Task ShowInventory()
         {
             await Task.Run(() => {
@@ -64,7 +71,11 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
             });
         }
 
+        #endregion
+
+        #region Skin List
         [Command("skins")]
+        [Help("Lets you see all skins in the database.")]
         public async Task BrowseSkins()
         {
             await Task.Run(() => {
@@ -76,10 +87,12 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
                 SingleItemViewer v = new SingleItemViewer(items, Context.Channel, Context.User, 0);
             });
         }
+        #endregion
 
-
+        #region Coin Balance
         [Command("coins", RunMode = RunMode.Async)]
-        public async Task GetCoinBalance(IUser targetUser = null)
+        [Help("Displays your coin balance, or, if targetUser is tagged (@Jakob), the coin balance of the target.")]
+        public async Task GetCoinBalance([Help("The user targeted by this command. Defaults to the command sender. Tag the user to provide input here.")] IUser targetUser = null)
         {
             User u;
             if (targetUser is null)
@@ -95,10 +108,12 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
 
             await Context.Channel.SendMessageAsync((targetUser == null ? (Context.User.Username + ", you have ") : (targetUser.Username + " has ")) + u.Coins + " coins.");
         }
+        #endregion
 
-
+        #region Modify Coin Balance
         [Command("addcoins", RunMode = RunMode.Async)]
-        public async Task AddCoins(int amount, IUser targetUser = null)
+        [Help("Admin command. Allows admins to modify the coin balance of a user or themselves.")]
+        public async Task AddCoins([Help("The amount of coins to add. Can be negative.")] int amount, [Help("The user whose coin balance should be modified. Defaults to command sender.")] IUser targetUser = null)
         {
             // Get the user that executed the command cast it to SocketGuildUser
             // so we can access the Roles property
@@ -128,10 +143,14 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
             }
 
         }
+        #endregion
+
+        #region Drop Command
         private static Random r = new Random();
         public static Dictionary<ulong, LongCooldown> dropCooldownsByUser = new Dictionary<ulong, LongCooldown>();
         public static TimeSpan defaultCooldownLen = new TimeSpan(0, 45, 0);
         [Command("drop", RunMode = RunMode.Async)]
+        [Help("Drops a random item of low to medium value. Has a cooldown.")]
         public async Task DropCommand()
         {
             var userid = Context.User.Id;
@@ -176,26 +195,12 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
             });
 
         }
+        #endregion
 
-        //[Command("help")]
-        //public async Task HelpCommand(string command = null)
-        //{
-        //    if (command == null)
-        //    {
-        //        EmbedBuilder em = new EmbedBuilder();
-        //        em.WithTitle("Help").Color = Color.Blue;
-        //        //em.AddField(new EmbedFieldBuilder().WithName("Introduction").WithValue(SettingsManager.IntroductionString));
-
-        //        public StringBuilder CommandListBuilder = new StringBuilder();
-        //    }
-
-    
-
-        //    await Context.Channel.SendMessageAsync("You can view your coin balance using $coins. You will gain coins for being in a voice channel. Using those coins, buy cases from $cases. View all owned items using $inv. When viewing a case of which you own atleast one, you can open it to get a skin. Also, you can use $drop to get a random item.");
-        //}
-
-
-        public async Task HelpCommand(string command = null)
+        #region Help
+        [Command("help")]
+        [Help("Displays information about the bot, for example a list of commands.")]
+        public async Task HelpCommand([Help("The command to get more information on. Defaults to a list of all commands.")]string command = null)
         {
             if(command == null)
             {
@@ -238,9 +243,11 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
                 }
             }
         }
+        #endregion
 
-
+        #region Clear Inventory
         [Command("clear_inventory")]
+        [Help("Clears your inventory. Warning: this action is irreversible!")]
         public async Task ClearInventory()
         {
             User u = User.FromID(Context.User.Id);
@@ -248,5 +255,6 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
             await Context.Channel.SendMessageAsync("Inventory cleared.");
             Logger.Log(LogLevel.WARNING, "User with id {0} cleared his inventory!", u.UserID);
         }
+        #endregion
     }
 }

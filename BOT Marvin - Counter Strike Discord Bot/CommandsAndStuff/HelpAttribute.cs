@@ -11,6 +11,6 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
         public string OneLineDesc;
         public string LongDescription;
 
-        public HelpAttribute(string example) => Example = example;
+        public HelpAttribute(string oneLineDesc) => OneLineDesc = oneLineDesc;
     }
 }
