@@ -73,7 +73,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
             int argPos = 0;
 
             // Determine if the message is a command based on the prefix and make sure no bots trigger commands
-            if (!(message.HasCharPrefix(_prefix, ref argPos) ||
+            if (!(message.HasCharPrefix(_prefix, ref argPos) || (SettingsManager.IsDevEnv && message.HasCharPrefix('?', ref argPos)) ||
                 message.HasMentionPrefix(_client.CurrentUser, ref argPos)))
                 return;
 

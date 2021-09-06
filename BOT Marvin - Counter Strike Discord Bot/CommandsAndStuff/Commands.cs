@@ -209,24 +209,32 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
                 em.Color = Color.Blue;
 
                 em.AddField(new EmbedFieldBuilder().WithName("Introduction").WithValue(SettingsManager.IntroductionString));
+                em.WithFooter("Written by jakob using Discord.NET :)");
 
-                StringBuilder commandListBuilder = new StringBuilder();
-                commandListBuilder.AppendLine("Format: $command <optional parameter> [required parameter]");
+
+                em.AddField(new EmbedFieldBuilder().WithName("List of Commands").WithValue("Format: $command <optional parameter> [required parameter]"));
                 foreach (var cmdHelp in CommandHandler.CommandDescriptions.OrderBy(x => x.Name))
                 {
-                    commandListBuilder.Append("---->  $" + cmdHelp.Name);
+                    StringBuilder commandListBuilder = new StringBuilder();
+                    EmbedFieldBuilder emfb = new EmbedFieldBuilder();
+                    
+                    commandListBuilder.Append("$" + cmdHelp.Name);
                     foreach (var item in cmdHelp.Parameters)
                     {
-
+                        
                         if (item.Parameter.IsOptional)
                             commandListBuilder.Append(" <" + item.Name + ">");
                         else
                             commandListBuilder.Append(" [" + item.Name + "]");
                     }
-                    commandListBuilder.AppendLine(" | " + cmdHelp.Attribute.OneLineDesc);
+                    emfb.Name = commandListBuilder.ToString();
+                    emfb.Value = cmdHelp.Attribute.OneLineDesc;
+                    em.AddField(emfb);
                 }
 
-                em.AddField(new EmbedFieldBuilder().WithName("List of Commands").WithValue(commandListBuilder.ToString()));
+                
+
+
                 em.AddField(new EmbedFieldBuilder().WithName("More Info").WithValue("Want to know more about a command (like examples, parameter types, etc.)? Use $help <command-name>"));
                 await Context.Channel.SendMessageAsync("", false, em.Build());
             }
