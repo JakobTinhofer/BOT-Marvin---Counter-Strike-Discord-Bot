@@ -22,9 +22,23 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
             doc.Save(File.OpenWrite(SettingsXML));
         }
 
-        public static void Initialize(string tkn = null, string settingsPath = null, string mip = null)
+        public static void Initialize(string tkn = null, string tokenPath = null, string settingsPath = null, string mip = null)
         {
-            _token = tkn;
+            if(tokenPath == null)
+                _token = tkn;
+            else
+            {
+                try
+                {
+                    _token = File.ReadAllText(tokenPath);
+                }
+                catch (Exception)
+                {
+                    Logger.Log(LogLevel.FATAL, "Invalid token path!");
+                    Environment.Exit(55);
+                }
+                
+            }
             SettingsXML = settingsPath == null ? SettingsXML : settingsPath;
             if (mip != null)
                 _mongoips.Insert(0, mip);

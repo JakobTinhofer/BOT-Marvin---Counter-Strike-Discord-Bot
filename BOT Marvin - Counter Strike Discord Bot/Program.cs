@@ -80,6 +80,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
         private static string cmdMongoIP = null;
         private static string cmdToken = null;
         private static string cmdSettingsPath = null;
+        private static string cmdTokenPath = null;
         private static void HandleCMDLineArgs(string[] args)
         {
             try
@@ -103,9 +104,19 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                             break;
                         case "--settings":
                             var i3 = Array.FindIndex<string>(args, new Predicate<string>((string val) => { return val == "--settings"; }));
-                            cmdToken = args[++i3];
+                            cmdSettingsPath = args[++i3];
+                            break;
+                        case "--token-path":
+                            var i4 = Array.FindIndex<string>(args, new Predicate<string>((string val) => { return val == "--token-path"; }));
+                            cmdTokenPath = args[++i4];
                             break;
                     }
+                }
+
+                if (cmdToken != null && cmdTokenPath != null)
+                {
+                    Console.WriteLine("--token-path and --token are mutually exclusive!");
+                    Environment.Exit(55);
                 }
             }
             catch (Exception)
