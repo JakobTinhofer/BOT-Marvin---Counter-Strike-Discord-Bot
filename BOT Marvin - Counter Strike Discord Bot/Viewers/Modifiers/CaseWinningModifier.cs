@@ -21,6 +21,10 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Modifiers
         protected override ViewerPage _modify(ViewerPage page, ViewerDisplayArgs args)
         {
             page.Fields.Clear();
+
+            SingleItemViewer s = args.Sender as SingleItemViewer;
+            var c = ((SkinItem)s.GetDisplayedItem()).Rarity.Color;
+            page.Page.Color = new Discord.Color(c.R, c.G, c.B);
             page.AddField("Congratulations!", "You won this item!");
             return page;
         }

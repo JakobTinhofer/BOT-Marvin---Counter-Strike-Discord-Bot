@@ -250,6 +250,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
                 else
                 {
                     EmbedBuilder em = new EmbedBuilder();
+                    em.Color = Color.Green;
                     em.Title = "Help - " + command;
                     em.WithFooter("Written by jakob using Discord.NET :)");
                     if (cmdHelp.Attribute.LongDescription != null)
