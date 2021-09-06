@@ -34,18 +34,36 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
             EmbedBuilder eb = new EmbedBuilder();
             var p = new ViewerPage(eb);
             if (i.getType() == ItemType.Skin)
-                eb.Title = ((SkinItem)i).WeaponName + " | " + i.Name;
-            else
+            {
+                SkinItem s = i as SkinItem;
+                eb.Color = s.Rarity.Color;
+                if ((s.Modifier & SkinModifier.StatTrak) == SkinModifier.StatTrak)
+                    eb.Title = "StatTrakᵀᴹ ";
+                if ((s.Modifier & SkinModifier.Souvenir) == SkinModifier.Souvenir)
+                    eb.Title = "Souvenier ";
+                eb.Title += ((SkinItem)i).WeaponName + " | " + i.Name;
+
+                string pr;
+                if(s.Modifier != SkinModifier.Normal)
+                    pr = s.ModifiedPrice[s.Modifier].ToString();
+                else
+                    pr = ((IEconomyItem)i).GetPrice().ToString();
+                p.AddField("Price", pr + " coins");
+            }
+            else 
+            {
                 eb.Title = i.Name;
+                if(i as IEconomyItem != null)
+                {
+                    string pr = ((IEconomyItem)i).GetPrice().ToString();
+                    p.AddField("Price", pr + " coins");
+                }
+            }
+                
 
 
             p.AddField("Description", i.Description);
-            string pr = ((IEconomyItem)i).GetPrice().ToString();
-            p.AddField("Price", pr + " coins");
-            //if (pr.Length > 2)
-            //    p.AddField("Price", pr.Insert(pr.Length - 2, ",") + "€");
-            //else
-            //    p.AddField("Price", pr + " cents");
+            
             p.AddField("Navigation", "React with ⬅ to navigate left, or with ➡ to navigate right. React with ❌ to close the viewer!");
             
             eb.ImageUrl = i.ImageURL;

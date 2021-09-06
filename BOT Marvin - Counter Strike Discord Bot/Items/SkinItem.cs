@@ -13,6 +13,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
     public class SkinItem : Item, IEconomyItem, IDropableItem
     {
 
+        #region Constructor and Parsing
         /// <summary>
         /// Creates a new SkinItem from the values in this BsonDocument.<br/>
         /// PLEASE NOTE THAT THIS IS RESOURCE INTENSIVE, SINCE IT REQUIRES A DATABASE LOOKUP. Look if the object is cached in <see cref="Item.cachedItems"/>. 
@@ -33,6 +34,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
             isActivityDropping = skin["isActivityDropping"].AsBoolean;
             IsCaseDropable = skin["isDropable"].AsBoolean;
         }
+        
 
         /// <summary>
         /// Parses the prices of the weapon with <see cref="SkinModifier"/>s.
@@ -49,12 +51,19 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
             {
                 var res = modPrices.GetValue(s.ToString(), -1).AsInt32;
                 if (res != -1)
+                {
                     ModifiedPrice.Add(s, res);
+                }
+                    
             }
         }
+        #endregion
+
+        #region Private Members
         private bool isActivityDropping;
         private double dropValueMultiplier;
         private int price;
+        #endregion
 
         #region Public Properties
         /// <summary>
@@ -79,6 +88,8 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
         /// The value of the skins depending on the <see cref="SkinModifier"/> it has.
         /// </summary>
         public Dictionary<SkinModifier, int> ModifiedPrice { get; private set; } = new Dictionary<SkinModifier, int>();
+
+        public SkinModifier Modifier { get; set; } = SkinModifier.Normal;
         /// <summary>
         /// How rare this skin is.
         /// </summary>

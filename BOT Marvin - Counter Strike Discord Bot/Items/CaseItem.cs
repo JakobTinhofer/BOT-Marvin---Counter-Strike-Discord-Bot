@@ -40,7 +40,12 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Items
             {
                 l.Add(list.Value, list.Key.ProbabilityValue);
             }
-            return l.GetRandomItem().GetRandomItem();
+            var winning = l.GetRandomItem().GetRandomItem();
+            if(new Random().NextDouble() <= SettingsManager.SpecialModProbability)
+            {
+                winning.Get().Modifier = ModifiersDropped;
+            }
+            return winning;
         }
 
         #endregion

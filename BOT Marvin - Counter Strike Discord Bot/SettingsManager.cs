@@ -174,5 +174,10 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
 
         #endregion
 
+        #region Constants
+
+        public static readonly double SpecialModProbability = 0.15;
+
+        #endregion
     }
 }
