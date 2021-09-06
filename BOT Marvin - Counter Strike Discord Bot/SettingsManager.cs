@@ -34,7 +34,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                 }
                 catch (Exception)
                 {
-                    Logger.Log(LogLevel.FATAL, "Invalid token path!");
+                    Logger.Log(LogLevel.FATAL, "Token path '{0}' is not valid!", tokenPath);
                     Environment.Exit(55);
                 }
                 

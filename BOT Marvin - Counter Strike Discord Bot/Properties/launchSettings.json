@@ -8,7 +8,7 @@
     "Testing Bot Bob": {
       "commandName": "Executable",
       "executablePath": "D:\\NOSYNC\\GitRepos\\csgo-discord-bot\\BOT Marvin - Counter Strike Discord Bot\\bin\\Release\\netcoreapp3.1\\BOT Marvin - Counter Strike Discord Bot.exe",
-      "commandLineArgs": "-dev"
+      "commandLineArgs": "-dev --token-path ../../hiddenResources/token.txt"
     }
   }
 }
