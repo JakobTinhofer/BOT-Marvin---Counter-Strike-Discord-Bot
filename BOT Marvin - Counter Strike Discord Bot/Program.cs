@@ -29,7 +29,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
         private async Task StartBot()
         {
             Logger.AddLogWriter(new ConsoleLogWriter(LogLevel.ALL));
-            SettingsManager.Initialize(cmdToken, cmdSettingsPath, cmdMongoIP);
+            SettingsManager.Initialize(tkn: cmdToken, tokenPath: cmdTokenPath, settingsPath: cmdSettingsPath, mip: cmdMongoIP);
             MongoInterface.Setup();
             ViewerModifier.InitViewerModifiers();
             Logger.Log(LogLevel.INFO, "Starting discord bot! Connecting to discord api.");
