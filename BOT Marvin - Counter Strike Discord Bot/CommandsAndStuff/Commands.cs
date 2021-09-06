@@ -215,9 +215,11 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
                 em.AddField(new EmbedFieldBuilder().WithName("List of Commands").WithValue("Format: $command <optional parameter> [required parameter]"));
                 foreach (var cmdHelp in CommandHandler.CommandDescriptions.OrderBy(x => x.Name))
                 {
-                    StringBuilder commandListBuilder = new StringBuilder();
+                    
                     EmbedFieldBuilder emfb = new EmbedFieldBuilder();
                     
+                    
+                    StringBuilder commandListBuilder = new StringBuilder();
                     commandListBuilder.Append("$" + cmdHelp.Name);
                     foreach (var item in cmdHelp.Parameters)
                     {
@@ -247,7 +249,57 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
                 }
                 else
                 {
-                    throw new NotImplementedException();
+                    EmbedBuilder em = new EmbedBuilder();
+                    em.Title = "Help - " + command;
+                    em.WithFooter("Written by jakob using Discord.NET :)");
+                    if (cmdHelp.Attribute.LongDescription != null)
+                        em.AddField(new EmbedFieldBuilder().WithName("Description").WithValue(cmdHelp.Attribute.LongDescription));
+                    else
+                        em.AddField(new EmbedFieldBuilder().WithName("Description").WithValue(cmdHelp.Attribute.OneLineDesc));
+
+                    StringBuilder commandListBuilder = new StringBuilder();
+                    commandListBuilder.Append("$" + cmdHelp.Name);
+
+
+                    EmbedFieldBuilder emfb = new EmbedFieldBuilder();
+                    if(cmdHelp.Parameters.Count > 0)
+                    {
+                        emfb.Name = "List of Parameters";
+                        emfb.Value = "Describes all the parameters and what they do.";
+                        em.AddField(emfb);
+                        
+                        foreach (var item in cmdHelp.Parameters)
+                        {
+                            emfb.Name = item.Name;
+                            emfb.Value = item.Attribute.OneLineDesc;
+
+
+
+                            if (item.Parameter.IsOptional)
+                            {
+                                commandListBuilder.Append(" <" + item.Name + ">");
+                                emfb.Value += "This parameter is optional. ";
+                            }
+                            else
+                                commandListBuilder.Append(" [" + item.Name + "]");
+
+                            if (item.Attribute.Example != null)
+                                emfb.Value += "\nExample: " + item.Attribute.Example;
+                        }
+                        emfb = new EmbedFieldBuilder();
+                    }
+                    
+                    emfb.Name = "Usage";
+                    emfb.Value = commandListBuilder.ToString();
+                    em.AddField(emfb);
+                    emfb = new EmbedFieldBuilder();
+                    if (cmdHelp.Attribute.Example != null)
+                        em.AddField(new EmbedFieldBuilder().WithName("Example command").WithValue(cmdHelp.Attribute.Example));
+
+                    emfb.Name = "More Commands";
+                    emfb.Value = "If you want to see a list of all commands, use $help without any parameters.";
+                    em.AddField(emfb);
+                    await Context.Channel.SendMessageAsync(embed: em.Build());
                 }
             }
         }
