@@ -81,10 +81,9 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
                 }
                 actionsByEmoji = newActions;
                 List<IEmote> reactionsToRemove = new List<IEmote>();
-                Console.WriteLine("Number of reactions: " + CurrentMessage.Reactions.Count);
+                CurrentMessage.UpdateAsync().Wait();
                 foreach (var item in CurrentMessage.Reactions)
                 {
-                    Console.WriteLine("Here.");
                     if (!actionsByEmoji.ContainsKey(item.Key))
                         reactionsToRemove.Add(item.Key);
                 }
