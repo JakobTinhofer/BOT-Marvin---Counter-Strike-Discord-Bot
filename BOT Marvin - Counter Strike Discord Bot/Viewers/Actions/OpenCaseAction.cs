@@ -49,7 +49,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Actions
             u.AddItem(item.Get().ItemID);
             u.RemoveItem(i.ItemID);
             args.Sender.Destroy();
-            SingleItemViewer v = new SingleItemViewer(l, args.Channel, (SocketUser)args.Actor, 0, false);
+            SingleItemViewer v = new SingleItemViewer(l, args.Channel, (SocketUser)args.Actor, 0, displayImidiately: false);
             v.Modifiers.Clear();
             v.Modifiers.Add(new CaseWinningModifier());
             v.UpdateAsync();

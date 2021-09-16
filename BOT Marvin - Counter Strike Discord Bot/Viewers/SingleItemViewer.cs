@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using LightBlueFox.Util.Logging;
+using BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Modifiers;
 
 namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
 {
@@ -17,12 +18,12 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
 
         public int Index { get; private set; }
 
-        public SingleItemViewer(List<BsonDocument> items, ISocketMessageChannel channel, SocketUser requester, int startIndex, bool displayImidiately = true) : base(items, channel, requester, displayImidiately)
+        public SingleItemViewer(List<BsonDocument> items, ISocketMessageChannel channel, SocketUser requester, int startIndex, ViewerModifier[] mods = null, bool displayImidiately = true) : base(items, channel, requester, mods, displayImidiately)
         {
             Index = startIndex;
         }
 
-        public SingleItemViewer(List<ItemHolder<Item>> items, ISocketMessageChannel channel, SocketUser requester, int startIndex, bool displayImidiately = true) : base(items, channel, requester, displayImidiately)
+        public SingleItemViewer(List<ItemHolder<Item>> items, ISocketMessageChannel channel, SocketUser requester, int startIndex, ViewerModifier[] mods = null, bool displayImidiately = true) : base(items, channel, requester, mods, displayImidiately)
         {
             Index = startIndex;
         }

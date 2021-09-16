@@ -9,7 +9,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
 {
     public class ViewerPage
     {
-        public List<ViewerAction> PageActions { get; private set; } = new List<ViewerAction>();
+        public List<ViewerAction> PageActions { get; private set; } 
         public EmbedBuilder Page { get; private set; }
         public Dictionary<string, EmbedFieldBuilder> Fields { get; private set; } = new Dictionary<string, EmbedFieldBuilder>();
         public Embed Build()
@@ -28,6 +28,6 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
             Fields.Add(name, emf);
         }
 
-        public ViewerPage(EmbedBuilder builder) => Page = builder;
+        public ViewerPage(EmbedBuilder builder) { Page = builder; PageActions = new List<ViewerAction>(); }
     }
 }
