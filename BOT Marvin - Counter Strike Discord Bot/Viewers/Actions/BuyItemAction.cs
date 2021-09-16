@@ -40,7 +40,6 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers.Actions
             {
                 u.Coins -= i.GetPrice();
                 u.AddItem(((Item)i).ItemID);
-                args.Sender.UpdateAsync();
                 Logger.Log(LogLevel.INFO, "User " + args.Actor.Username + " bought item '" + ((Item)i).Name + "'.");
             }
             else

@@ -65,7 +65,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
                 else
                 {
                     Context.Message.DeleteAsync();
-                    SingleItemViewer v = new SingleItemViewer(u.GetItems(), Context.Channel, Context.User, 0);
+                    SingleItemViewer v = new SingleItemViewer(u.GetItems(), Context.Channel, Context.User, 0, new ViewerModifier[1] { new SellItemModifier() });
                 }
 
             });
@@ -176,7 +176,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.CommandsAndStuff
                         var l = new List<ItemHolder<Item>>();
                         l.Add(new ItemHolder<Item>(item.Get()));
                         u.AddItem(item.Get().ItemID);
-                        SingleItemViewer v = new SingleItemViewer(l, Context.Channel, Context.User, 0, false);
+                        SingleItemViewer v = new SingleItemViewer(l, Context.Channel, Context.User, 0, displayImidiately: false);
                         v.Modifiers.Clear();
                         v.Modifiers.Add(new CaseWinningModifier());
                         v.UpdateAsync();

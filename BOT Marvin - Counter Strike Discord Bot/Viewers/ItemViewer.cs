@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using LightBlueFox.Util.Logging;
+using System.Threading;
 
 namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
 {
@@ -28,14 +29,21 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
         public ViewerPage Page { get; private set; }
         public List<ViewerModifier> Modifiers;
         protected abstract ViewerPage Display();
+
+        protected bool isDestroyed = false;
         #endregion
 
         #region Methods
+        private AutoResetEvent isUpdateFree = new AutoResetEvent(true);
         public async void UpdateAsync()
         {
             
             await Task.Run(() => {
+                if (isDestroyed)
+                    return;
+                isUpdateFree.WaitOne();
                 Logger.Log(LogLevel.DEBUG, "Running Update!");
+                
                 Page = Display();
                 foreach (var mod in Modifiers)
                 {
@@ -73,6 +81,7 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
                 }
                 actionsByEmoji = newActions;
                 List<IEmote> reactionsToRemove = new List<IEmote>();
+                CurrentMessage.UpdateAsync().Wait();
                 foreach (var item in CurrentMessage.Reactions)
                 {
                     if (!actionsByEmoji.ContainsKey(item.Key))
@@ -80,16 +89,21 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
                 }
                 foreach (var r in reactionsToRemove)
                 {
-                    CurrentMessage.RemoveAllReactionsForEmoteAsync(r);
+                    Logger.Log(LogLevel.DEBUG, "Removing {0} reaction.", r.Name);
+                    CurrentMessage.RemoveAllReactionsForEmoteAsync(r).Wait();
                 }
 
                 Logger.Log(LogLevel.DEBUG, "---> Registered " + newActions.Count + " actions!");
+                isUpdateFree.Set();
             });
             
         }
 
         public void Destroy()
         {
+            if (isDestroyed)
+                return;
+            isDestroyed = true;
             ViewerByMessageID.Remove(CurrentMessage.Id);
             actionsByEmoji.Clear();
             CurrentMessage.DeleteAsync();
@@ -100,17 +114,26 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
         #region Constructors And Static Viewer Dictionaries
         public static Dictionary<ulong, ItemViewer> ViewerByMessageID = new Dictionary<ulong, ItemViewer>();
 
-        public ItemViewer(List<ItemHolder<Item>> items, ISocketMessageChannel channel, SocketUser requester, bool displayImidiately)
+        
+
+        public ItemViewer(List<ItemHolder<Item>> items, ISocketMessageChannel channel, SocketUser requester, ViewerModifier[] mods = null, bool displayImidiately = true)
         {
             Modifiers = new List<ViewerModifier>(ViewerModifier.KnownModifiers);
             Items = items;
             Channel = channel;
             User = requester;
+            if (mods != null)
+            {
+                foreach (var item in mods)
+                {
+                    Modifiers.Add(item);
+                }
+            }
             if(displayImidiately)
                 UpdateAsync();
         }
 
-        public ItemViewer(List<BsonDocument> items, ISocketMessageChannel channel, SocketUser requester, bool displayImidiately)
+        public ItemViewer(List<BsonDocument> items, ISocketMessageChannel channel, SocketUser requester, ViewerModifier[] mods = null, bool displayImidiately = true)
         {
             Modifiers = new List<ViewerModifier>(ViewerModifier.KnownModifiers);
             Logger.Log(LogLevel.DEBUG, "Creating new Item Viewer from BSON Documents!");
@@ -120,6 +143,15 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
             {
                 this.Items.Add(new ItemHolder<Item>(b));
             }
+
+            if (mods != null)
+            {
+                foreach (var item in mods)
+                {
+                    Modifiers.Add(item);
+                }
+            }
+
             Logger.Log(LogLevel.DEBUG, "Finished Parsing " + Items.Count + " items!");
             if(displayImidiately)
                 UpdateAsync();
@@ -139,7 +171,12 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Viewers
                     if(action.send403Msg)
                         Channel.SendMessageAsync("You are not allowed to interact with this, only " + action.usableBy.Username + " is!");
                 }
-                action.TriggerAction(new ActionArgs(this, actor, Channel));
+                else
+                {
+                    action.TriggerAction(new ActionArgs(this, actor, Channel));
+                    UpdateAsync();  
+                }
+                
             }
         }
 

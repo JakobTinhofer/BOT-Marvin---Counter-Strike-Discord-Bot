@@ -1,4 +1,5 @@
 ﻿using BOT_Marvin___Counter_Strike_Discord_Bot.Items;
+using LightBlueFox.Util.Logging;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -64,16 +65,27 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot.Users
         private void ParseInventory(BsonDocument b)
         {
             var li = b["inventory"].AsBsonArray.ToList();
-
+            bool rewrite = false;
             
             foreach (ObjectId id in li)
             {
-                var itm = new ItemHolder<Item>(id);
-                if (!Inventory.ContainsKey(itm))
-                    Inventory.Add(itm, 1);
-                else
-                    Inventory[itm] += 1;
+                try
+                {
+                    var itm = new ItemHolder<Item>(id);
+                    if (!Inventory.ContainsKey(itm))
+                        Inventory.Add(itm, 1);
+                    else
+                        Inventory[itm] += 1;
+                }
+                catch (Exception)
+                {
+                    Logger.Log(LogLevel.WARNING, "Encountered error while trying to parse item. Removing it from DB.");
+                    rewrite = true;
+                }
+                
             }
+            if (rewrite)
+                UpdateDB();
         }
         #endregion
         /// <summary>
