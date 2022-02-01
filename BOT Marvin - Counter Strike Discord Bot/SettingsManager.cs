@@ -10,8 +10,8 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
     public static class SettingsManager
     {
         #region XML Parsing and Managing
-
-        private static string SettingsXML = "settings.xml";
+        private static List<string> settingPaths = new List<string>(){ "settings.xml", "publish/settings.xml", "../settings.xml" };
+        private static string SettingsXML;
         private static string _token = null;
         private static bool isInitialized = false;
 
@@ -24,9 +24,9 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
 
         public static void Initialize(string tkn = null, string tokenPath = null, string settingsPath = null, string mip = null)
         {
-            if(tokenPath == null)
+            if(tkn != null)
                 _token = tkn;
-            else
+            else if(tokenPath != null)
             {
                 try
                 {
@@ -39,57 +39,44 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                 }
                 
             }
-            SettingsXML = settingsPath == null ? SettingsXML : settingsPath;
+
+            // Make sure value passed by cmd is tried first
+            if(settingPaths != null)
+                settingPaths.Insert(0, settingsPath);
+            // Make sure value passed by cmd is tried first
             if (mip != null)
                 _mongoips.Insert(0, mip);
+
+
             doc = new XmlDocument();
-            try
+            for (int i = 0; i <= settingPaths.Count; i++)
             {
-                doc.Load(SettingsXML);
-            }
-            catch (Exception)
-            {
-                SettingsXML = "publish/settings.xml";
                 try
                 {
-                    doc.Load(SettingsXML);
+                    doc.Load(settingPaths[i]);
+                    isInitialized = true;
+                    SettingsXML = settingPaths[i];
+                    break;
                 }
-                catch (Exception)
+                catch (FileNotFoundException)
                 {
-                    SettingsXML = "../settings.xml";
-                    try
-                    {
-                        doc.Load(SettingsXML);
-                    }
-                    catch (Exception)
-                    {
-                        Logger.Log(LogLevel.ERROR, "Settings cannot be found! Please manually enter the path....");
-                        while (true)
-                        {
-                            Console.Write("Path: ");
-                            SettingsXML = Console.ReadLine();
-                            try
-                            {
-                                doc.Load(SettingsXML);
-                                break;
-                            }
-                            catch (XmlException e)
-                            {
-                                Logger.Log(LogLevel.FATAL, "Settings XML is invalid! Message: '" + e.Message + "'. Exiting....");
-                                Environment.Exit(1);
-                            }
-                            catch (Exception)
-                            {
-                                Logger.Log(LogLevel.ERROR, "Invalid Path! Try again:");
-                            }
-                        }
-                    }
-
+                    // Try next path
                 }
-
+                catch (XmlException e)
+                {
+                    // File exists but xml is invalid
+                    Logger.Log(LogLevel.FATAL, "XML is invalid! Message: {0} at {1}:{2}! Exiting...", e.Message, e.LineNumber, e.LinePosition);
+                    Environment.Exit(1);
+                }
+                catch (IndexOutOfRangeException)
+                {
+                    // Read new path, add it to paths and move iterator back
+                    Logger.Log(LogLevel.ERROR, "Settings cannot be found! Please manually enter the path....");
+                    Console.Write("Path: ");
+                    settingPaths.Add(Console.ReadLine());
+                    i--;
+                }
             }
-            isInitialized = true;
-
         }
 
         #endregion
@@ -100,8 +87,9 @@ namespace BOT_Marvin___Counter_Strike_Discord_Bot
                 {
                     Logger.Log(LogLevel.ERROR, "Token has not been set yet! Please manually enter the discord API token.");
                     ConsoleLogWriter.ConsoleAvailable.WaitOne();
-                    Console.Write("Token: ");
+                    Console.Write("Token: ");                    
                     _token = Console.ReadLine().Trim();
+                    ConsoleLogWriter.ConsoleAvailable.Set();
                 }
                 return _token; 
                 

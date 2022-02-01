@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>BOT_Marvin___Counter_Strike_Discord_Bot</RootNamespace>
   </PropertyGroup>
 
@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Util">
-      <HintPath>..\..\lightbluefox-util\Util\bin\Release\netstandard2.0\Util.dll</HintPath>
+    <Reference Include="LightBlueFox.Util">
+      <HintPath>D:\NOSYNC\GitRepos\lightbluefox-util\Util\bin\Release\net6.0\LightBlueFox.Util.dll</HintPath>
     </Reference>
   </ItemGroup>
 
